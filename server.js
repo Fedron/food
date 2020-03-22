@@ -67,12 +67,12 @@ app.prepare().then(() => {
     res.send("");
   });
 
-  server.post("/signout", (req, res) => {
+  server.get("/signout", (req, res) => {
     req.session = null;
     res.redirect("/signin");
   });
 
-  server.get("/", requireAuth, (req, res) => { res.send() });
+  server.get("/", requireAuth, (req, res) => { return app.render(req, res, "/") });
 
   server.get("*", (req, res) => {
     return handle(req, res);

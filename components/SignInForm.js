@@ -12,7 +12,7 @@ import Container from '@material-ui/core/Container';
 
 import 'isomorphic-fetch';
 import useImportForm from '../hooks/useFormInput.js';
-import UseStyles from './styles/authStyles.js';
+import useStyles from './styles/authStyles.js';
 
 const SignInForm = () => {
   const [username, handleUsername, resetUsername] = useImportForm("");
@@ -20,7 +20,7 @@ const SignInForm = () => {
 
   const [error, setError] = useState("");
 
-  const classes = UseStyles();
+  const classes = useStyles();
 
   const handleSubmit = (e) => {
     e.preventDefault();

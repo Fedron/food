@@ -1,11 +1,10 @@
+import PersistentDrawer from '../components/PersistentDrawer.js';
+
 const Index = () => {
   return (
-    <>
-    <h4>Index</h4>
-    <form method="POST" action="/signout">
-      <button type="submit">Sign out</button>
-    </form>
-    </>
+    <PersistentDrawer>
+      <h1>Content</h1>
+    </PersistentDrawer>
   );
 }
 

@@ -12,7 +12,7 @@ import Container from '@material-ui/core/Container';
 
 import 'isomorphic-fetch';
 import useImportForm from '../hooks/useFormInput.js';
-import UseStyles from './styles/authStyles.js';
+import useStyles from './styles/authStyles.js';
 
 const SignUpForm = () => {
   const [username, handleUsername] = useImportForm("");
@@ -25,7 +25,7 @@ const SignUpForm = () => {
     passwordConf: "",
   });
 
-  const classes = UseStyles();
+  const classes = useStyles();
 
   const handleSubmit = (e) => {
     e.preventDefault();
