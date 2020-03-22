@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import Router from 'next/router';
+import Link from 'next/link';
+
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+
 import 'isomorphic-fetch';
 import useImportForm from '../hooks/useFormInput.js';
+import UseStyles from './styles/authStyles.js';
 
 const SignUpForm = () => {
   const [username, handleUsername] = useImportForm("");
@@ -13,6 +24,8 @@ const SignUpForm = () => {
     password: "",
     passwordConf: "",
   });
+
+  const classes = UseStyles();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,21 +72,73 @@ const SignUpForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>Username</label>
-      <input type="text" name="username" value={username} onChange={handleUsername} placeholder="Username" />
-      <small>{errors.username}</small>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">Sign Up</Typography>
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            value={username}
+            onChange={handleUsername}
+          />
+          {errors.username &&
+            <Typography className={classes.error}>{errors.username}</Typography>
+          }
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="password"
+            label="Password"
+            type="password"
+            name="password"
+            value={password}
+            onChange={handlePassword}
+          />
+          {errors.password &&
+            <Typography className={classes.error}>{errors.password}</Typography>
+          }
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="passwordConf"
+            label="Password Confirmation"
+            type="password"
+            name="passwordConf"
+            value={passwordConf}
+            onChange={handlePasswordConf}
+          />
+          {errors.passwordConf &&
+            <Typography className={classes.error}>{errors.passwordConf}</Typography>
+          }
 
-      <label>Password</label>
-      <input type="password" name="password" value={password} onChange={handlePassword} placeholder="Password" />
-      <small>{errors.password}</small>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+        </form>
 
-      <label>Password confirmation</label>
-      <input type="password" name="passwordConfirmation" value={passwordConf} onChange={handlePasswordConf} placeholder="Password confirmation" />
-      <small>{errors.passwordConf}</small>
-
-      <button type="submit">Sign up</button>
-    </form>
+        <Link href="/signin"><a>Already got an account? Sign in here</a></Link>
+      </div>
+    </Container>
   );
 }
  
