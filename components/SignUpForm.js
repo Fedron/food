@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
+import Router from 'next/router';
+import 'isomorphic-fetch';
 import useImportForm from '../hooks/useFormInput.js';
 
 const SignUpForm = () => {
-  const [email, handleEmail] = useImportForm("");
+  const [username, handleUsername] = useImportForm("");
   const [password, handlePassword, resetPassword] = useImportForm("");
   const [passwordConf, handlePasswordConf, resetPasswordConf] = useImportForm("");
 
   const [errors, setErrors] = useState({
-    email: "",
+    username: "",
     password: "",
-    passwordConf: ""
+    passwordConf: "",
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    let updatedErrors = {};
 
-    let updatedErrors = {
-      email: "",
-      password: "",
-      passwordConf: ""
-    };
-
-    if (!email) {
-      updatedErrors = {...updatedErrors, email: "Please enter an email"};
+    if (!username) {
+      updatedErrors = {...updatedErrors, username: "Please enter a username"};
+    } else if (username.length < 5) {
+      updatedErrors = {...updatedErrors, username: "Your username must be atleast 5 characters long"};
     }
 
     if (!password) {
@@ -38,18 +37,32 @@ const SignUpForm = () => {
       resetPasswordConf();
     }
 
-    if (updatedErrors !== errors) {
+    if (Object.keys(updatedErrors).length > 0) {
       setErrors(updatedErrors);
     } else {
-      console.log("signup successful");
+      fetch("/signup", {
+        method: "post",
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password, passwordConf })
+      }).then((res) => {
+        if (res.status === 200) {
+          Router.push("/signin")
+        } else {
+          setErrors({...errors, username: res.statusText});
+          resetPassword();
+        }
+      });
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>Email</label>
-      <input type="email" name="email" value={email} onChange={handleEmail} placeholder="Email" />
-      <small>{errors.email}</small>
+      <label>Username</label>
+      <input type="text" name="username" value={username} onChange={handleUsername} placeholder="Username" />
+      <small>{errors.username}</small>
 
       <label>Password</label>
       <input type="password" name="password" value={password} onChange={handlePassword} placeholder="Password" />
