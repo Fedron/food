@@ -1,6 +1,6 @@
 import SignUpForm from '../components/SignUpForm.js';
 
-const SignUp = ({ hello }) => {
+const SignUp = () => {
   return (
     <SignUpForm />
   );

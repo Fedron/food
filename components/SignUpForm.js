@@ -49,7 +49,7 @@ const SignUpForm = () => {
         body: JSON.stringify({ username, password, passwordConf })
       }).then((res) => {
         if (res.status === 200) {
-          Router.push("/signin")
+          Router.push("/");
         } else {
           setErrors({...errors, username: res.statusText});
           resetPassword();

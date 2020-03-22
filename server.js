@@ -9,6 +9,13 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const requireAuth = (req, res, next) => {
+  if (!req.session.userID) {
+    return res.redirect("/signin");
+  }
+  next();
+}
+
 app.prepare().then(() => {
   const server = express();
 
@@ -32,10 +39,40 @@ app.prepare().then(() => {
     }
 
     const user = await usersDB.create({ username, password });
-    req.session.userID = user.id
+    req.session.userID = user.id;
 
     res.send("");
   });
+
+  server.post("/signin", async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      res.statusMessage = "Fields cannot be left blank";
+      return res.status(400).send("");
+    }
+
+    const user = await usersDB.getBy({ username });
+    if (!user) {
+      res.statusMessage = "Password incorrect";
+      return res.status(400).send("");
+    }
+
+    if (!await usersDB.comparePasswords(user.password, password)) {
+      res.statusMessage = "Password incorrect";
+      return res.status(400).send("");
+    }
+
+    req.session.userID = user.id;
+    res.send("");
+  });
+
+  server.post("/signout", (req, res) => {
+    req.session = null;
+    res.redirect("/signin");
+  });
+
+  server.get("/", requireAuth, (req, res) => { res.send() });
 
   server.get("*", (req, res) => {
     return handle(req, res);
