@@ -1,103 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, } from 'react';
 import clsx from 'clsx';
-import uuid from 'uuid/v4';
 import { useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
 import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Collapse from '@material-ui/core/Collapse';
+import CloseIcon from '@material-ui/icons/Close';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { ChromePicker } from 'react-color';
-
 import useStyles from './styles/DatabaseStyles.js';
-import useFormInput from '../hooks/useFormInput.js';
+import 'isomorphic-fetch';
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0); // integer state
-  return () => setValue(value => ++value); // update the state to force render
-}
-
-const DatabaseEditor = ({ title, database }) => {
+const DatabaseEditor = ({ title, database, render }) => {
   const classes = useStyles();
   const theme = useTheme();
 
   // State
   const [activeTimeframe, setActiveTimeframe] = useState("");
-  const [timeframeName, handleTimeframeName,, setTimeframeName] = useFormInput("");
-  const [timeframeDur, handleTimeframeDur,, setTimeframeDur] = useFormInput("");
-  const [timeframeColor, setTimeframeColor] = useState("");
-
-  const [newTimeframeName, handleNewTimeframeName,, setNewTimeframeName] = useFormInput("");
-  const [newTimeframeDur, handleNewTimeframeDur,, setNewTimeframeDur] = useFormInput("");
-  const [newTimeframeColor, setNewTimeframeColor] = useState("");
-
-  const [errors, setErrors] = useState({});
 
   const [newDatabase, setDatabase] = useState(database);
   const [hasChanges, setHasChanges] = useState(false);
   const [isCreating, setCreating] = useState(false);
 
-  // Funcs
-  const forceUpdate = useForceUpdate();
-  useEffect(() => {
-    setTimeframeName(activeTimeframe.name);
-    setTimeframeDur(activeTimeframe.duration);
-    setTimeframeColor(activeTimeframe.color);
-  }, [activeTimeframe, hasChanges]);
+  const [saveNotification, setSaveNotification] = useState(undefined);
 
-  const updateTimeframe = () => {
-    const updatedErrors = {}
-    if (!timeframeName) {
-      updatedErrors.name = "Cannot leave blank";
-    }
-
-    if (!timeframeDur) {
-      updatedErrors.duration = "Cannot leave blank"
-    }
-
-    setErrors(updatedErrors);
-
-    if (Object.keys(updatedErrors).length > 0) {
-      return;
-    }
-
-    const updated = newDatabase;
-    const recordToUpdate = updated.find(item => item.id === activeTimeframe.id);
-    recordToUpdate.name = timeframeName;
-    recordToUpdate.duration = timeframeDur;
-    recordToUpdate.color = timeframeColor.hex ? timeframeColor.hex : timeframeColor;
-    recordToUpdate.changed = true;
-
-    setDatabase(updated);
+  const updateDB = (newRecord) => {
     setHasChanges(true);
+
+    const updatedDatabase = newDatabase;
+    let recordToUpdate = updatedDatabase.find(item => item.id === newRecord.id);
+    if (!recordToUpdate) {
+      setDatabase([...newDatabase, newRecord]);
+      return
+    }
+
+    recordToUpdate = newRecord;
+    setDatabase([...updatedDatabase]);
   }
 
-  const createNewTimeframe = () => {
-    const updatedErrors = {}
-    if (!newTimeframeName) {
-      updatedErrors.name = "Cannot leave blank";
+  const saveChanges = () => {
+    let updatedDatabase = newDatabase;
+    for (let record of updatedDatabase) {
+      if (record.removed) {
+        updatedDatabase = updatedDatabase.filter(r => r.id !== record.id);
+        continue;
+      }
+
+      delete record["new"];
+      delete record["changed"];
     }
 
-    if (!newTimeframeDur) {
-      updatedErrors.duration = "Cannot leave blank"
-    }
+    setDatabase(updatedDatabase);
 
-    setErrors(updatedErrors);
-
-    if (Object.keys(updatedErrors).length > 0) {
-      return;
-    }
-
-    setDatabase([...database, {
-      id: uuid(),
-      name: newTimeframeName,
-      duration: newTimeframeDur,
-      color: newTimeframeColor.hex,
-      new: true
-    }]);
-    setHasChanges(true);
+    fetch("/db/timeframes/save", {
+      method: "post",
+      headers: {
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(updatedDatabase)
+    }).then((res) => {
+      if (res.status === 200) {
+        setActiveTimeframe("");
+        setCreating(false);
+        setHasChanges(false);
+        setSaveNotification(
+            <Alert
+              severity="success"
+              style={{ marginBottom: theme.spacing(2) }}
+              action={
+                <IconButton color="inherit" size="small" onClick={() => { setSaveNotification(undefined); }}>
+                  <CloseIcon />
+                </IconButton>
+              }
+            >
+              <AlertTitle>Changes Saved!</AlertTitle>
+              All your changes were saved!
+            </Alert>
+        );
+      } else {
+        setSaveNotification(
+          <Alert severity="error" style={{ marginBottom: theme.spacing(2) }}>
+            <AlertTitle>Couldn't save changes</AlertTitle>
+            Something went horribly wrong on the server and your changes couldn't be saved.
+          </Alert>
+        );
+      }
+    });
   }
 
   const renderedDatabase = newDatabase.map(item =>
@@ -114,6 +105,7 @@ const DatabaseEditor = ({ title, database }) => {
         setCreating(false);
         setActiveTimeframe(item);
       }}
+      disabled={item.removed}
     >
       <Typography>{item.name} - ({item.duration})</Typography>  
       {item.removed ?
@@ -128,6 +120,7 @@ const DatabaseEditor = ({ title, database }) => {
 
   return (
     <>
+    {saveNotification}
     {hasChanges &&
       <Alert severity="error" style={{ marginBottom: theme.spacing(2) }}>
         <AlertTitle>Unsaved Changes</AlertTitle>
@@ -145,6 +138,8 @@ const DatabaseEditor = ({ title, database }) => {
         variant="contained"
         color="primary"
         className={classes.saveChangesButton}
+        disabled={!hasChanges}
+        onClick={saveChanges}
       >Save Changes</Button>
     </div>
     <Grid container spacing={4} >
@@ -153,7 +148,7 @@ const DatabaseEditor = ({ title, database }) => {
           <div className={classes.dbView}>
             <Paper elevation={0} variant="outlined" style={{ flexGrow: 1, marginRight: theme.spacing(2) }}>
               {renderedDatabase}
-              <Button className={classes.dbItem} style={{ marginTop: theme.spacing(2) }} onClick={() => {
+              <Button className={classes.dbItem} style={{ marginTop: theme.spacing(2), justifyContent: "center" }} onClick={() => {
                 setCreating(true);
               }}>
                 <Typography><i className="fas fa-plus"></i> Add new</Typography>  
@@ -181,60 +176,11 @@ const DatabaseEditor = ({ title, database }) => {
       <Grid item xs={12} sm={6}>
         <Paper className={classes.editor}>
           {(activeTimeframe || isCreating) ?
-          <>
-            <Typography
-              variant="h2"
-              style={{ marginBottom: theme.spacing(2) }}
-            >
-              {isCreating ?
-              `Create new ${title}`
-              :
-              `Edit '${activeTimeframe.name}' ${title}`
-              }
-            </Typography>
-            <main style={{ width: "50%" }}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                id="name"
-                label="Name of timeframe"
-                name="name"
-                value={isCreating ? newTimeframeName : timeframeName}
-                onChange={isCreating ? handleNewTimeframeName : handleTimeframeName}
-              />
-              {errors.name &&
-              <Typography color="error">{errors.name}</Typography>
-              }
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                id="duration"
-                label="Estimated time e.g <2 hours"
-                name="duration"
-                value={isCreating ? newTimeframeDur : timeframeDur}
-                onChange={isCreating ? handleNewTimeframeDur : handleTimeframeDur}
-              />
-              {errors.duration &&
-              <Typography color="error">{errors.duration}</Typography>
-              }
-              <ChromePicker
-                width="100%"
-                color={isCreating ? newTimeframeColor : timeframeColor}
-                onChange={isCreating ? setNewTimeframeColor : setTimeframeColor}
-              />
-              <Button
-                onClick={isCreating ? createNewTimeframe : updateTimeframe}
-                fullWidth
-                variant="contained"
-                color="primary"
-                style={{ margin: theme.spacing(1, 0) }}
-              >
-                {isCreating ? "Create" : "Submit"}
-              </Button>
-            </main>
-          </>
+          render({
+            isCreating,
+            updateDB,
+            activeTimeframe
+          })
           :
           <>
             <Typography variant="h3">

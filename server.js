@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 
 const usersDB = require("./databases/UsersDB.js");
+const timeframesDB = require("./databases/TimeframesDB.js");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -40,6 +41,11 @@ app.prepare().then(() => {
 
     const user = await usersDB.create({ username, password });
     req.session.userID = user.id;
+    
+    await timeframesDB.create({
+      id,
+      timeframes: []
+    });
 
     res.send("");
   });
@@ -74,6 +80,11 @@ app.prepare().then(() => {
 
   server.get("/", requireAuth, (req, res) => { return app.render(req, res, "/") }
   );
+
+  server.post("/db/timeframes/save", requireAuth, async (req, res) => {
+    await timeframesDB.update(req.session.userID, req.body);
+    res.send("");
+  });
 
   server.get("*", (req, res) => {
     return handle(req, res);
