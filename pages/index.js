@@ -3,7 +3,7 @@ import PersistentDrawer from '../components/PersistentDrawer.js';
 const Index = () => {
   return (
     <PersistentDrawer>
-      <h1>Content</h1>
+      <h1>Dashboard</h1>
     </PersistentDrawer>
   );
 }

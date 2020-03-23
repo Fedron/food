@@ -11,7 +11,7 @@ const useFormInput = (initialVal) => {
     setState("");
   }
 
-  return [state, handleChange, reset];
+  return [state, handleChange, reset, setState];
 }
 
 export default useFormInput

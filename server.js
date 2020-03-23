@@ -72,7 +72,8 @@ app.prepare().then(() => {
     res.redirect("/signin");
   });
 
-  server.get("/", requireAuth, (req, res) => { return app.render(req, res, "/") });
+  server.get("/", requireAuth, (req, res) => { return app.render(req, res, "/") }
+  );
 
   server.get("*", (req, res) => {
     return handle(req, res);
