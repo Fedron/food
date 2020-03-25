@@ -6,14 +6,18 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/Close';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import useStyles from './styles/DatabaseStyles.js';
 import 'isomorphic-fetch';
 
-const DatabaseEditor = ({ title, database, render }) => {
+function useForceUpdate(){
+  const [value, setValue] = useState(0); // integer state
+  return () => setValue(value => ++value); // update the state to force render
+}
+
+const DatabaseEditor = ({ title, database, render, currentUrl }) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -25,6 +29,7 @@ const DatabaseEditor = ({ title, database, render }) => {
   const [isCreating, setCreating] = useState(false);
 
   const [saveNotification, setSaveNotification] = useState(undefined);
+  const forceUpdate = useForceUpdate();
 
   const updateDB = (newRecord) => {
     setHasChanges(true);
@@ -133,6 +138,22 @@ const DatabaseEditor = ({ title, database, render }) => {
         color="primary"
         className={classes.discardChangesButton}
         style={{ marginRight: theme.spacing(2) }}
+        onClick={() => {
+          const updatedDatabase = newDatabase;
+          updatedDatabase.forEach((record, index) => {
+            if (record["new"] && index > -1) {
+              this.splice(index, 1);
+              return;
+            }
+            
+            delete record["changed"];
+            delete record["removed"];
+          }, updatedDatabase);
+
+          setDatabase(updatedDatabase);
+          setHasChanges(false);
+          forceUpdate();
+        }}
       >Discard Changes</Button>
       <Button
         variant="contained"

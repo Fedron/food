@@ -80,7 +80,7 @@ const TimeframeForm = ({
 
     setNewTimeframeName("");
     setNewTimeframeDur("");
-    setNewTimeframeColor("#000000");
+    setNewTimeframeColor('#'+Math.random().toString(16).substr(-6));
   }
 
   return (

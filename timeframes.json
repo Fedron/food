@@ -1,6 +1,19 @@
 [
   {
     "id": "a97fde8afb8f6244",
-    "timeframes": []
+    "timeframes": [
+      {
+        "id": "415dde76-ab96-4847-bc25-5bd048df7673",
+        "name": "medium",
+        "duration": "2 hours",
+        "color": "#0ae230"
+      },
+      {
+        "id": "ee7964d1-4a0b-401c-950e-94c0c4c64a11",
+        "name": "long",
+        "duration": "3+ hours",
+        "color": "#b50911"
+      }
+    ]
   }
 ]
