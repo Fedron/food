@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
-import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import useStyles from './styles/DatabaseStyles.js';
@@ -17,7 +17,7 @@ function useForceUpdate(){
   return () => setValue(value => ++value); // update the state to force render
 }
 
-const DatabaseEditor = ({ title, database, render, currentUrl }) => {
+const DatabaseEditor = ({ title, database, render, databaseItem }) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -104,7 +104,7 @@ const DatabaseEditor = ({ title, database, render, currentUrl }) => {
         (item.id === activeTimeframe.id) && classes.dbItemActive,
         item.removed && classes.dbItemRemoved
       )}
-      style={{ backgroundColor: item.color }}
+      style={{ backgroundColor: item.color ? item.color : "#fff" }}
       onClick={() => {
         if (item.removed) { return; }
         setCreating(false);
@@ -112,14 +112,7 @@ const DatabaseEditor = ({ title, database, render, currentUrl }) => {
       }}
       disabled={item.removed}
     >
-      <Typography>{item.name} - ({item.duration})</Typography>  
-      {item.removed ?
-        <Typography style={{ fontWeight: "bold", color: "white" }}>* Removed</Typography>
-        : item.new ?
-          <Typography style={{ fontWeight: "bold", color: "white" }}>* New</Typography>
-          : ( item.changed &&
-          <Typography style={{ fontWeight: "bold", color: "white" }}>* Changed</Typography>)
-      }
+      {databaseItem({ item })}
     </Button>
   );
 
