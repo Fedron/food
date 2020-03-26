@@ -87,13 +87,13 @@ const PersistentDrawer = (props) => {
           <ListItem button >
             <Icon className="fas fa-carrot" style={{ marginRight: theme.spacing(4) }} />
             <ListItemText>
-              <Link href="/db/food"><a>Foods Database</a></Link>
+              <Link href="/db/foods"><a>Foods Database</a></Link>
             </ListItemText>
           </ListItem>
           <ListItem button >
             <Icon className="fas fa-book" style={{ marginRight: theme.spacing(4) }} />
             <ListItemText>
-              <Link href="/db/catergory"><a>Catergories Database</a></Link>
+              <Link href="/db/catergories"><a>Catergories Database</a></Link>
             </ListItemText>
           </ListItem>
           <ListItem button >

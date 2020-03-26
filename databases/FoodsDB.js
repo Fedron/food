@@ -1,9 +1,7 @@
 const Database = require("./Database.js");
 
-class TimeframesDB extends Database {
+class FoodsDB extends Database {
   async create(attrs) {
-    attrs.id = this.randomID();
-
     const records = await this.getAll();
     records.push(attrs);
 
@@ -12,4 +10,4 @@ class TimeframesDB extends Database {
   }
 }
 
-module.exports = new TimeframesDB("timeframes.json");
+module.exports = new FoodsDB("foods.json");

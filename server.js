@@ -5,6 +5,7 @@ const cookieSession = require("cookie-session");
 
 const usersDB = require("./databases/UsersDB.js");
 const timeframesDB = require("./databases/TimeframesDB.js");
+const foodsDB = require("./databases/FoodsDB.js");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -43,8 +44,13 @@ app.prepare().then(() => {
     req.session.userID = user.id;
     
     await timeframesDB.create({
-      id,
+      id: user.id,
       timeframes: []
+    });
+
+    await foodsDB.create({
+      id: user.id,
+      foods: []
     });
 
     res.send("");

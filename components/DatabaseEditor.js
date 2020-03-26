@@ -22,7 +22,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
   const theme = useTheme();
 
   // State
-  const [activeTimeframe, setActiveTimeframe] = useState("");
+  const [activeItem, setActiveItem] = useState("");
 
   const [newDatabase, setDatabase] = useState(database);
   const [hasChanges, setHasChanges] = useState(false);
@@ -59,7 +59,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
 
     setDatabase(updatedDatabase);
 
-    fetch("/db/timeframes/save", {
+    fetch(`/db/${title}s/save`, {
       method: "post",
       headers: {
         "Accept": "application/json, text/plain, */*",
@@ -68,7 +68,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
       body: JSON.stringify(updatedDatabase)
     }).then((res) => {
       if (res.status === 200) {
-        setActiveTimeframe("");
+        setActiveItem("");
         setCreating(false);
         setHasChanges(false);
         setSaveNotification(
@@ -101,14 +101,14 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
       key={item.id}
       className={clsx(
         classes.dbItem,
-        (item.id === activeTimeframe.id) && classes.dbItemActive,
+        (item.id === activeItem.id) && classes.dbItemActive,
         item.removed && classes.dbItemRemoved
       )}
       style={{ backgroundColor: item.color ? item.color : "#fff" }}
       onClick={() => {
         if (item.removed) { return; }
         setCreating(false);
-        setActiveTimeframe(item);
+        setActiveItem(item);
       }}
       disabled={item.removed}
     >
@@ -173,12 +173,12 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
                 setCreating(true);
               }}><Icon className="fas fa-plus" /></Button>
               <Button onClick={() => {
-                if (activeTimeframe) {
+                if (activeItem) {
                   const updated = newDatabase;
-                  const recordToUpdate = updated.find(item => item.id === activeTimeframe.id);
+                  const recordToUpdate = updated.find(item => item.id === activeItem.id);
                   recordToUpdate.removed = true;
 
-                  setActiveTimeframe("");
+                  setActiveItem("");
                   setHasChanges(true);
                 }
               }}><Icon className="fas fa-times" /></Button>
@@ -189,11 +189,11 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
 
       <Grid item xs={12} sm={6}>
         <Paper className={classes.editor}>
-          {(activeTimeframe || isCreating) ?
+          {(activeItem || isCreating) ?
           render({
             isCreating,
             updateDB,
-            activeTimeframe
+            activeItem
           })
           :
           <>

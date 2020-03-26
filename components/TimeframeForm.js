@@ -10,7 +10,7 @@ import useFormInput from '../hooks/useFormInput.js';
 const TimeframeForm = ({
   isCreating,
   updateDB,
-  activeTimeframe
+  activeItem
 }) => {
   const theme = useTheme();
 
@@ -25,10 +25,10 @@ const TimeframeForm = ({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setTimeframeName(activeTimeframe.name);
-    setTimeframeDur(activeTimeframe.duration);
-    setTimeframeColor(activeTimeframe.color);
-  }, [activeTimeframe]);
+    setTimeframeName(activeItem.name);
+    setTimeframeDur(activeItem.duration);
+    setTimeframeColor(activeItem.color);
+  }, [activeItem]);
 
   const updateTimeframe = () => {
     const updatedErrors = {}
@@ -46,12 +46,12 @@ const TimeframeForm = ({
       return;
     }
 
-    activeTimeframe.name = timeframeName;
-    activeTimeframe.duration = timeframeDur;
-    activeTimeframe.color = timeframeColor.hex ? timeframeColor.hex : timeframeColor;
-    activeTimeframe.changed = true;
+    activeItem.name = timeframeName;
+    activeItem.duration = timeframeDur;
+    activeItem.color = timeframeColor.hex ? timeframeColor.hex : timeframeColor;
+    activeItem.changed = true;
 
-    updateDB(activeTimeframe);
+    updateDB(activeItem);
   }
 
   const createNewTimeframe = () => {
@@ -92,7 +92,7 @@ const TimeframeForm = ({
       {isCreating ?
       `Create new timeframe`
       :
-      `Edit '${activeTimeframe.name}' timeframe`
+      `Edit '${activeItem.name}' timeframe`
       }
     </Typography>
     <main style={{ width: "50%" }}>
