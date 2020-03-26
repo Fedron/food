@@ -3,16 +3,34 @@
     "id": "a97fde8afb8f6244",
     "timeframes": [
       {
-        "id": "415dde76-ab96-4847-bc25-5bd048df7673",
-        "name": "medium",
-        "duration": "2 hours",
-        "color": "#0ae230"
+        "id": "71094166-3bf3-483a-b212-5c1d7480bb00",
+        "name": "Quick",
+        "duration": "<30min",
+        "color": "#b3fd59"
       },
       {
-        "id": "ee7964d1-4a0b-401c-950e-94c0c4c64a11",
-        "name": "long",
-        "duration": "3+ hours",
-        "color": "#ef353e"
+        "id": "4f867419-e904-4e05-81a3-6b9c07c26058",
+        "name": "Short",
+        "duration": "<1hour",
+        "color": "#ecea3a"
+      },
+      {
+        "id": "2f55dd96-3ec3-48bb-94d0-baa32e282ae6",
+        "name": "Medium",
+        "duration": "<2hours",
+        "color": "#f69516"
+      },
+      {
+        "id": "ab4d1d57-22e6-460f-9c42-5b2b8154fc8b",
+        "name": "Long",
+        "duration": "<4hours",
+        "color": "#f45913"
+      },
+      {
+        "id": "5f2c8a64-b48c-497d-9956-269a15dd2d4a",
+        "name": "All Day",
+        "duration": ">6hours",
+        "color": "#f02f2f"
       }
     ]
   }

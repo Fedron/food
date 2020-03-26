@@ -98,6 +98,12 @@ app.prepare().then(() => {
     res.send("");
   });
 
+  server.post("/db/foods/save", requireAuth, async (req, res) => {
+    await foodsDB.update(req.session.userID, req.body);
+    res.send("");
+  });
+
+
   server.get("*", (req, res) => {
     return handle(req, res);
   });

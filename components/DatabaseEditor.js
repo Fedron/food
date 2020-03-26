@@ -38,7 +38,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
     let recordToUpdate = updatedDatabase.find(item => item.id === newRecord.id);
     if (!recordToUpdate) {
       setDatabase([...newDatabase, newRecord]);
-      return
+      return;
     }
 
     recordToUpdate = newRecord;
@@ -135,13 +135,13 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
           const updatedDatabase = newDatabase;
           updatedDatabase.forEach((record, index) => {
             if (record["new"] && index > -1) {
-              this.splice(index, 1);
+              updatedDatabase.splice(index, 1);
               return;
             }
             
             delete record["changed"];
             delete record["removed"];
-          }, updatedDatabase);
+          });
 
           setDatabase(updatedDatabase);
           setHasChanges(false);

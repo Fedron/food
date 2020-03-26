@@ -1,26 +1,32 @@
 import PersistentDrawer from '../../components/PersistentDrawer.js';
 import DatabaseEditor from '../../components/DatabaseEditor.js';
 import FoodForm from '../../components/FoodForm.js';
-import TimeframeItem from '../../components/TimeframeItem.js';
+import FoodItem from '../../components/FoodItem.js';
 import 'isomorphic-fetch';
 
-const Foods = ({ database }) => {
+const Foods = ({ database, userCategories, userTimeframes }) => {
   return (
     <PersistentDrawer>
       <DatabaseEditor title={"food"} database={database} render={props => (
-        <FoodForm {...props} />
+        <FoodForm {...props} userCategories={userCategories} userTimeframes={userTimeframes} />
       )} databaseItem={props => (
-        <TimeframeItem {...props} />
+        <FoodItem {...props} />
       )} />
     </PersistentDrawer>
   );
 }
 
 Foods.getInitialProps = async (ctx) => {
-  const res = await fetch(`http://localhost:3000/api/db/foods?user=${ctx.req.session.userID}`);
+  let res = await fetch(`http://localhost:3000/api/db/foods?user=${ctx.req.session.userID}`);
   const database = await res.json();
 
-  return { database };
+  res = await fetch(`http://localhost:3000/api/db/categories?user=${ctx.req.session.userID}`);
+  const userCategories = await res.json();
+
+  res = await fetch(`http://localhost:3000/api/db/timeframes?user=${ctx.req.session.userID}`);
+  const userTimeframes = await res.json();
+
+  return { database, userCategories, userTimeframes };
 }
 
 export default Foods;

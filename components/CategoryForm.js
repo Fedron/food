@@ -33,10 +33,6 @@ const CategoryForm = ({
       updatedErrors.name = "Cannot leave blank";
     }
 
-    if (categoryeDur) {
-      updatedErrors.duration = "Cannot leave blank"
-    }
-
     setErrors(updatedErrors);
 
     if (Object.keys(updatedErrors).length > 0) {

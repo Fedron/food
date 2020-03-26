@@ -1,6 +1,42 @@
 [
   {
     "id": "a97fde8afb8f6244",
-    "categories": []
+    "categories": [
+      {
+        "id": "e7dfc4f7-eefe-4ede-990c-f6006d9825be",
+        "name": "Polievki",
+        "color": "#55eed6"
+      },
+      {
+        "id": "a4e17b0f-ef7d-43cb-8ce6-86ae4185d40b",
+        "name": "Omacki",
+        "color": "#f460b0"
+      },
+      {
+        "id": "98e530e1-f2bb-4307-bbb9-a3393999b387",
+        "name": "Gulase",
+        "color": "#c356eb"
+      },
+      {
+        "id": "b052fe4d-4e58-4077-91b1-22fc2c1f01ca",
+        "name": "Iceland",
+        "color": "#f7b818"
+      },
+      {
+        "id": "5192b741-2f1b-4158-aa19-2fd699b51a3a",
+        "name": "Fish",
+        "color": "#78abfc"
+      },
+      {
+        "id": "a29fb041-1520-4f32-a13f-f3795a30dddf",
+        "name": "Beef",
+        "color": "#36ef24"
+      },
+      {
+        "id": "0dde19f1-0650-4711-8db1-8179ad759cb8",
+        "name": "Dadinkove",
+        "color": "#f86f57"
+      }
+    ]
   }
 ]
