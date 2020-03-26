@@ -1,6 +1,6 @@
 const Database = require("./Database.js");
 
-class FoodsDB extends Database {
+class CategoriesDB extends Database {
   async create(attrs) {
     const records = await this.getAll();
     records.push(attrs);
@@ -15,9 +15,9 @@ class FoodsDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
 
-    record.foods = attrs;
+    record.categories = attrs;
     await this.writeAll(records);
   }
 }
 
-module.exports = new FoodsDB("foods.json");
+module.exports = new CategoriesDB("categories.json");

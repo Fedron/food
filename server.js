@@ -6,6 +6,7 @@ const cookieSession = require("cookie-session");
 const usersDB = require("./databases/UsersDB.js");
 const timeframesDB = require("./databases/TimeframesDB.js");
 const foodsDB = require("./databases/FoodsDB.js");
+const categoriesDB = require("./databases/CategoriesDB.js");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -89,6 +90,11 @@ app.prepare().then(() => {
 
   server.post("/db/timeframes/save", requireAuth, async (req, res) => {
     await timeframesDB.update(req.session.userID, req.body);
+    res.send("");
+  });
+
+  server.post("/db/categorys/save", requireAuth, async (req, res) => {
+    await categoriesDB.update(req.session.userID, req.body);
     res.send("");
   });
 
