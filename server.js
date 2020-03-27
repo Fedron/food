@@ -99,10 +99,19 @@ app.prepare().then(() => {
   });
 
   server.post("/db/foods/save", requireAuth, async (req, res) => {
+    for (let food of req.body) {
+      let newCategories = [];
+      for (let category of food.categories) {
+        const c = await categoriesDB.getBy(req.session.userID, { name: category });
+        if (!c) { continue }
+        newCategories.push(c.id);
+      }
+      food.categories = newCategories;
+    }
+
     await foodsDB.update(req.session.userID, req.body);
     res.send("");
   });
-
 
   server.get("*", (req, res) => {
     return handle(req, res);

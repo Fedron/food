@@ -18,6 +18,41 @@ class CategoriesDB extends Database {
     record.categories = attrs;
     await this.writeAll(records);
   }
+
+  async getBy(userID, filters) {
+    const userCategories = await this.get(userID);
+
+    for (let category of userCategories.categories) {
+      let found = true;
+      for (let key in filters) {
+        if (category[key] !== filters[key]) {
+          found = false;
+          break;
+        }
+      }
+
+      if (found ) { return category }
+    }
+
+    return null;
+
+    // for (let record of records) {
+    //   let found = true;
+    //   for (let category of record.categories) {
+    //     console.log(category);
+    //     for (let key in filters) {
+    //       if (category[key] !== filters[key]) {
+    //         found = false;
+    //         break;
+    //       }
+    //     }
+    //   }
+
+    //   if (found) { return record; }
+    // }
+
+    // return null;
+  }
 }
 
 module.exports = new CategoriesDB("categories.json");

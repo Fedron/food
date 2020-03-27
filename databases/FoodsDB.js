@@ -2,6 +2,7 @@ const Database = require("./Database.js");
 
 class FoodsDB extends Database {
   async create(attrs) {
+    attrs["timesUsed"] = 0;
     const records = await this.getAll();
     records.push(attrs);
 
@@ -16,7 +17,6 @@ class FoodsDB extends Database {
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
 
     record.foods = attrs;
-    record["timesUsed"] = 0;
     await this.writeAll(records);
   }
 }

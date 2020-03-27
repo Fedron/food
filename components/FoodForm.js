@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import uuid from 'uuid/v4';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -11,8 +11,13 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { MultipleSelect } from 'react-select-material-ui';
 import useFormInput from '../hooks/useFormInput.js';
+import RichTextEditor from './RichTextEditor.js';
 
 const useStyles = makeStyles((theme) => ({
   foodImage: {
@@ -35,14 +40,14 @@ const FoodForm = ({
   const classes = useStyles();
   const theme = useTheme();
   userCategories = userCategories.map(c => c.name);
-  userTimeframes = userTimeframes.map(t => t.name);
 
   const [foodName, handleFoodName,, setFoodName] = useFormInput("");
-  const [foodRecipe, handleFoodRecipe,, setFoodRecipe] = useFormInput("");
   const [foodImages, setFoodImages] = useState([]);
 
+  const [foodRecipe, setFoodRecipe] = useState("");
+  const [recipeEditorOpen, setRecipeEditorOpen] = useState(false);
+
   const [newFoodName, handleNewFoodName,, setNewFoodName] = useFormInput("");
-  const [newFoodRecipe, handleNewFoodRecipe,, setNewFoodRecipe] = useFormInput("");
   const [newFoodImages, setNewFoodImages] = useState([]);
 
   const [foodCategories, setFoodCategories] = useState([]);
@@ -59,6 +64,7 @@ const FoodForm = ({
     setFoodImages(activeItem.images);
     setFoodCategories(activeItem.categories);
     setFoodTimeframe(activeItem.timeframe);
+    setFoodRecipe(activeItem.recipe);
   }, [activeItem]);
 
   const updateFood = () => {
@@ -85,6 +91,10 @@ const FoodForm = ({
       updatedErrors.name = "Cannot leave blank";
     }
 
+    if (!newFoodImages.length) {
+      updatedErrors.images = "Please add at least one image";
+    }
+
     setErrors(updatedErrors);
 
     if (Object.keys(updatedErrors).length > 0) {
@@ -94,7 +104,7 @@ const FoodForm = ({
     updateDB({
       id: uuid(),
       name: newFoodName,
-      recipe: newFoodRecipe,
+      recipe: foodRecipe,
       images: newFoodImages,
       categories: foodCategories,
       timeframe: foodTimeframe,
@@ -102,7 +112,7 @@ const FoodForm = ({
     });
 
     setNewFoodName("");
-    setNewFoodRecipe("");
+    setFoodRecipe("");
     setNewFoodImages([]);
     setFoodCategories([]);
     setFoodTimeframe("");
@@ -173,19 +183,51 @@ const FoodForm = ({
       <Typography color="error">{errors.name}</Typography>
       }
 
-      <TextField
-        variant="outlined"
-        margin="normal"
+      <div style={{ display: "flex" }}>
+        <Typography variant="h5" style={{ marginRight: theme.spacing(4) }}>Recipe</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => { setRecipeEditorOpen(true); }}
+        >
+          Open editor
+        </Button>
+      </div>
+      <Dialog 
+        open={recipeEditorOpen}
+        onClose={() => { setRecipeEditorOpen(false); }}
         fullWidth
-        id="recipe"
-        label="Link to recipe"
-        name="recipe"
-        value={isCreating ? newFoodRecipe : foodRecipe}
-        onChange={isCreating ? handleNewFoodRecipe : handleFoodRecipe}
-      />
-      {errors.recipe &&
-      <Typography color="error">{errors.recipe}</Typography>
-      }
+        maxWidth="xl"
+      >
+        <DialogTitle>Recipe Editor</DialogTitle>
+        <DialogContent>
+          <RichTextEditor
+            data={foodRecipe}
+            onChange={(event, editor) => {
+              setFoodRecipe(editor.getData());
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: theme.palette.error.main, color: "white" }}
+            onClick={() => {
+              setRecipeEditorOpen(false);
+              setFoodRecipe("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => { setRecipeEditorOpen(false); }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <MultipleSelect
         label="Choose some categories"
@@ -208,7 +250,7 @@ const FoodForm = ({
           onChange={handleFoodTimeframe}
         >
           {userTimeframes.map(t => (
-            <MenuItem key={t} value={t}>{t}</MenuItem>
+            <MenuItem key={t.id} value={t.id}>{t.name} ({t.duration})</MenuItem>
           ))}
         </Select>
       </FormControl>
@@ -226,6 +268,9 @@ const FoodForm = ({
           setNewFoodImages([...newFoodImages, newImage]);
         }
       }} />
+      {errors.images &&
+      <Typography color="error">{errors.images}</Typography>
+      }
       {isCreating ? renderedNewFoodImages : renderedFoodImages}
 
       <Button
