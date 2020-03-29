@@ -103,7 +103,7 @@ app.prepare().then(() => {
       let newCategories = [];
       for (let category of food.categories) {
         const c = await categoriesDB.getBy(req.session.userID, { name: category });
-        if (!c) { continue }
+        if (!c) { newCategories.push(category); continue; }
         newCategories.push(c.id);
       }
       food.categories = newCategories;
@@ -111,6 +111,10 @@ app.prepare().then(() => {
 
     await foodsDB.update(req.session.userID, req.body);
     res.send("");
+  });
+
+  server.post("/db/foods/image/save", requireAuth, async (req, res) => {
+    
   });
 
   server.get("*", (req, res) => {

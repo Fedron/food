@@ -66,6 +66,7 @@ const SignUpForm = () => {
         } else {
           setErrors({...errors, username: res.statusText});
           resetPassword();
+          resetPasswordConf();
         }
       });
     }
