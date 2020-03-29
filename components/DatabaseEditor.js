@@ -45,7 +45,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
     setDatabase([...updatedDatabase]);
   }
 
-  const saveChanges = () => {
+  const saveChanges = async () => {
     let updatedDatabase = newDatabase;
     for (let record of updatedDatabase) {
       if (record.removed) {
@@ -53,47 +53,50 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
         continue;
       }
 
-      delete record["new"];
-      delete record["changed"];
+      if (record["new"] || record["changed"]) {
+        delete record["new"];
+        delete record["changed"];
+
+        fetch(`/db/${title}s/save`, {
+          method: "post",
+          headers: {
+            "Accept": "application/json, text/plan, */*",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(record)
+        }).then((res) => {
+          if (res.status === 200) {
+            setActiveItem("");
+            setCreating(false);
+            setHasChanges(false);
+            setSaveNotification(
+                <Alert
+                  severity="success"
+                  style={{ marginBottom: theme.spacing(2) }}
+                  action={
+                    <IconButton color="inherit" size="small" onClick={() => { setSaveNotification(undefined); }}>
+                      <CloseIcon />
+                    </IconButton>
+                  }
+                >
+                  <AlertTitle>Changes Saved!</AlertTitle>
+                  All your changes were saved!
+                </Alert>
+            );
+          } else {
+            setSaveNotification(
+              <Alert severity="error" style={{ marginBottom: theme.spacing(2) }}>
+                <AlertTitle>Couldn't save changes</AlertTitle>
+                Something went horribly wrong on the server and your changes couldn't be saved.
+              </Alert>
+            );
+          }
+        });
+      }
     }
 
     setDatabase(updatedDatabase);
-
-    fetch(`/db/${title}s/save`, {
-      method: "post",
-      headers: {
-        "Accept": "application/json, text/plain, */*",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(updatedDatabase)
-    }).then((res) => {
-      if (res.status === 200) {
-        setActiveItem("");
-        setCreating(false);
-        setHasChanges(false);
-        setSaveNotification(
-            <Alert
-              severity="success"
-              style={{ marginBottom: theme.spacing(2) }}
-              action={
-                <IconButton color="inherit" size="small" onClick={() => { setSaveNotification(undefined); }}>
-                  <CloseIcon />
-                </IconButton>
-              }
-            >
-              <AlertTitle>Changes Saved!</AlertTitle>
-              All your changes were saved!
-            </Alert>
-        );
-      } else {
-        setSaveNotification(
-          <Alert severity="error" style={{ marginBottom: theme.spacing(2) }}>
-            <AlertTitle>Couldn't save changes</AlertTitle>
-            Something went horribly wrong on the server and your changes couldn't be saved.
-          </Alert>
-        );
-      }
-    });
+    setHasChanges(false);
   }
 
   const renderedDatabase = newDatabase.map(item =>

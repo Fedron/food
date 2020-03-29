@@ -99,22 +99,20 @@ app.prepare().then(() => {
   });
 
   server.post("/db/foods/save", requireAuth, async (req, res) => {
-    for (let food of req.body) {
-      let newCategories = [];
-      for (let category of food.categories) {
-        const c = await categoriesDB.getBy(req.session.userID, { name: category });
-        if (!c) { newCategories.push(category); continue; }
-        newCategories.push(c.id);
-      }
-      food.categories = newCategories;
+    let newCategories = [];
+    for (let category of req.body.categories) {
+      const c = await categoriesDB.getBy(req.session.userID, { name: category });
+      if (!c) { newCategories.push(category); continue; }
+      newCategories.push(c.id);
     }
+    req.body.categories = newCategories;
 
     await foodsDB.update(req.session.userID, req.body);
     res.send("");
   });
 
   server.post("/db/foods/image/save", requireAuth, async (req, res) => {
-    
+    await foodsDB.addImage(req.session.userID, req.body);
   });
 
   server.get("*", (req, res) => {

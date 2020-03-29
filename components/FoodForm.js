@@ -18,6 +18,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { MultipleSelect } from 'react-select-material-ui';
 import useFormInput from '../hooks/useFormInput.js';
 import RichTextEditor from './RichTextEditor.js';
+import 'isomorphic-fetch';
 
 const useStyles = makeStyles((theme) => ({
   foodImage: {
