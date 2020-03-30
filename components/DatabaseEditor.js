@@ -50,6 +50,14 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
     for (let record of updatedDatabase) {
       if (record.removed) {
         updatedDatabase = updatedDatabase.filter(r => r.id !== record.id);
+        await fetch(`/db/${title}s/delete`, {
+          method: "post",
+          headers: {
+            "Accept": "application/json, text/plan, */*",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ id: record.id })
+        })
         continue;
       }
 
@@ -57,41 +65,83 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
         delete record["new"];
         delete record["changed"];
 
-        fetch(`/db/${title}s/save`, {
-          method: "post",
-          headers: {
-            "Accept": "application/json, text/plan, */*",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(record)
-        }).then((res) => {
-          if (res.status === 200) {
-            setActiveItem("");
-            setCreating(false);
-            setHasChanges(false);
-            setSaveNotification(
-                <Alert
-                  severity="success"
-                  style={{ marginBottom: theme.spacing(2) }}
-                  action={
-                    <IconButton color="inherit" size="small" onClick={() => { setSaveNotification(undefined); }}>
-                      <CloseIcon />
-                    </IconButton>
-                  }
-                >
-                  <AlertTitle>Changes Saved!</AlertTitle>
-                  All your changes were saved!
+        if (title !== "food") {
+          fetch(`/db/${title}s/save`, {
+            method: "post",
+            headers: {
+              "Accept": "application/json, text/plan, */*",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(record)
+          }).then((res) => {
+            if (res.status === 200) {
+              setActiveItem("");
+              setCreating(false);
+              setHasChanges(false);
+              setSaveNotification(
+                  <Alert
+                    severity="success"
+                    style={{ marginBottom: theme.spacing(2) }}
+                    action={
+                      <IconButton color="inherit" size="small" onClick={() => { setSaveNotification(undefined); }}>
+                        <CloseIcon />
+                      </IconButton>
+                    }
+                  >
+                    <AlertTitle>Changes Saved!</AlertTitle>
+                    All your changes were saved!
+                  </Alert>
+              );
+            } else {
+              setSaveNotification(
+                <Alert severity="error" style={{ marginBottom: theme.spacing(2) }}>
+                  <AlertTitle>Couldn't save changes</AlertTitle>
+                  Something went horribly wrong on the server and your changes couldn't be saved.
                 </Alert>
-            );
-          } else {
-            setSaveNotification(
-              <Alert severity="error" style={{ marginBottom: theme.spacing(2) }}>
-                <AlertTitle>Couldn't save changes</AlertTitle>
-                Something went horribly wrong on the server and your changes couldn't be saved.
-              </Alert>
-            );
+              );
+            }
+          });
+        } else {
+          const images = record.images;
+          delete record["images"];
+          await fetch(`/db/foods/save`, {
+            method: "post",
+            headers: {
+              "Accept": "application/json, text/plan, */*",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(record)
+          });
+
+          for (let image of images) {
+            await fetch(`/db/foods/image/save`, {
+              method: "post",
+              headers: {
+                "Accept": "application/json, text/plan, */*",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ id: record.id, ...image })
+            });
           }
-        });
+
+          setActiveItem("");
+          setCreating(false);
+          setHasChanges(false);
+          setSaveNotification(
+              <Alert
+                severity="success"
+                style={{ marginBottom: theme.spacing(2) }}
+                action={
+                  <IconButton color="inherit" size="small" onClick={() => { setSaveNotification(undefined); }}>
+                    <CloseIcon />
+                  </IconButton>
+                }
+              >
+                <AlertTitle>Changes Saved!</AlertTitle>
+                All your changes were saved!
+              </Alert>
+          );
+        }
       }
     }
 

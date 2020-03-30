@@ -35,23 +35,14 @@ class CategoriesDB extends Database {
     }
 
     return null;
+  }
 
-    // for (let record of records) {
-    //   let found = true;
-    //   for (let category of record.categories) {
-    //     console.log(category);
-    //     for (let key in filters) {
-    //       if (category[key] !== filters[key]) {
-    //         found = false;
-    //         break;
-    //       }
-    //     }
-    //   }
+  async delete(userID, categoryID) {
+    const records = await this.getAll();
+    let record = records.find(r => r.id === userID);
+    record.categories = record.categories.filter(r => r.id !== categoryID);
 
-    //   if (found) { return record; }
-    // }
-
-    // return null;
+    await this.writeAll(records);
   }
 }
 

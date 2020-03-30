@@ -20,6 +20,13 @@ class TimeframesDB extends Database {
     record.timeframes = attrs;
     await this.writeAll(records);
   }
+
+  async delete(userID, timeframeID) {
+    const records = await this.getAll();
+    let record = records.find(r => r.id === userID);
+    record.timeframes = record.timeframes.filter(r => r.id !== timeframeID);
+    await this.writeAll(records);
+  }
 }
 
 module.exports = new TimeframesDB("timeframes.json");

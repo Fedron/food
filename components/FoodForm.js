@@ -66,6 +66,7 @@ const FoodForm = ({
     setFoodCategories(activeItem.categories);
     setFoodTimeframe(activeItem.timeframe);
     setFoodRecipe(activeItem.recipe);
+    setErrors({});
   }, [activeItem]);
 
   const updateFood = () => {
@@ -258,6 +259,11 @@ const FoodForm = ({
 
       <Typography variant="h5">Choose some images</Typography>
       <input type="file" onChange={(e) => {
+        if (e.target.files[0].size > 200000) {
+          setErrors({ ...errors, images: "Images mut be smaller than 200KB" });
+          return;
+        }
+
         const newImage = {
           name: e.target.files[0].name
         }

@@ -18,7 +18,7 @@ const Foods = ({ database, userCategories, userTimeframes }) => {
 
 Foods.getInitialProps = async (ctx) => {
   let res = await fetch(`http://localhost:3000/api/db/foods?user=${ctx.req.session.userID}`);
-  const database = await res.json();
+  let database = await res.json();
 
   res = await fetch(`http://localhost:3000/api/db/categories?user=${ctx.req.session.userID}`);
   const userCategories = await res.json();

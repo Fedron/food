@@ -92,9 +92,19 @@ app.prepare().then(() => {
     await timeframesDB.update(req.session.userID, req.body);
     res.send("");
   });
+  
+  server.post("/db/timeframes/delete", requireAuth, async (req, res) => {
+    await timeframesDB.delete(req.session.userID, req.body.id);
+    res.send("");
+  });
 
   server.post("/db/categorys/save", requireAuth, async (req, res) => {
     await categoriesDB.update(req.session.userID, req.body);
+    res.send("");
+  });
+
+  server.post("/db/categorys/delete", requireAuth, async (req, res) => {
+    await categoriesDB.delete(req.session.userID, req.body.id);
     res.send("");
   });
 
@@ -113,6 +123,12 @@ app.prepare().then(() => {
 
   server.post("/db/foods/image/save", requireAuth, async (req, res) => {
     await foodsDB.addImage(req.session.userID, req.body);
+    res.send("");
+  });
+
+  server.post("/db/foods/delete", requireAuth, async (req, res) => {
+    await foodsDB.delete(req.session.userID, req.body.id);
+    res.send("");
   });
 
   server.get("*", (req, res) => {
