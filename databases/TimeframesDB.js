@@ -2,8 +2,6 @@ const Database = require("./Database.js");
 
 class TimeframesDB extends Database {
   async create(attrs) {
-    attrs.id = this.randomID();
-
     const records = await this.getAll();
     records.push(attrs);
 

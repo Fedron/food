@@ -49,6 +49,11 @@ app.prepare().then(() => {
       timeframes: []
     });
 
+    await categoriesDB.create({
+      id: user.id,
+      categories: []
+    });
+
     await foodsDB.create({
       id: user.id,
       foods: []
@@ -136,6 +141,7 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
+  // process.env.PORT
   server.listen(process.env.PORT, err => {
     if (err) throw err;
     console.log("> Listening...");
