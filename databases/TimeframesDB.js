@@ -17,7 +17,8 @@ class TimeframesDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
 
-    record.timeframes = attrs;
+    record.timeframes.push(attrs);
+    console.log(records);
     await this.writeAll(records);
   }
 

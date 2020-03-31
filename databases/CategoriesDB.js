@@ -15,7 +15,7 @@ class CategoriesDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
 
-    record.categories = attrs;
+    record.categories.push(attrs);
     await this.writeAll(records);
   }
 

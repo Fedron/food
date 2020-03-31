@@ -66,6 +66,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
         delete record["changed"];
 
         if (title !== "food") {
+          console.log(`Saving ${record.name}`);
           fetch(`/db/${title}s/save`, {
             method: "post",
             headers: {

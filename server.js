@@ -89,6 +89,7 @@ app.prepare().then(() => {
   );
 
   server.post("/db/timeframes/save", requireAuth, async (req, res) => {
+    console.log(req.body);
     await timeframesDB.update(req.session.userID, req.body);
     res.send("");
   });
@@ -135,8 +136,8 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  server.listen(3000, err => {
+  server.listen(process.env.PORT, err => {
     if (err) throw err;
-    console.log("> Listening on localhost:3000");
+    console.log("> Listening...");
   });
 });
