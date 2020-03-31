@@ -17,7 +17,7 @@ const Categories = ({ database }) => {
 }
 
 Categories.getInitialProps = async (ctx) => {
-  const res = await fetch(`http://localhost:3000/api/db/categories?user=${ctx.req.session.userID}`);
+  const res = await fetch(`${ctx.req.protocol}://${ctx.req.get("host")}/api/db/categories?user=${ctx.req.session.userID}`);
   const database = await res.json();
 
   return { database };

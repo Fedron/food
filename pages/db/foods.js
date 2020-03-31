@@ -17,13 +17,13 @@ const Foods = ({ database, userCategories, userTimeframes }) => {
 }
 
 Foods.getInitialProps = async (ctx) => {
-  let res = await fetch(`http://localhost:3000/api/db/foods?user=${ctx.req.session.userID}`);
+  let res = await fetch(`${ctx.req.protocol}://${ctx.req.get("host")}/api/db/foods?user=${ctx.req.session.userID}`);
   let database = await res.json();
 
-  res = await fetch(`http://localhost:3000/api/db/categories?user=${ctx.req.session.userID}`);
+  res = await fetch(`${ctx.req.protocol}://${ctx.req.get("host")}/api/db/categories?user=${ctx.req.session.userID}`);
   const userCategories = await res.json();
 
-  res = await fetch(`http://localhost:3000/api/db/timeframes?user=${ctx.req.session.userID}`);
+  res = await fetch(`${ctx.req.protocol}://${ctx.req.get("host")}/api/db/timeframes?user=${ctx.req.session.userID}`);
   const userTimeframes = await res.json();
 
   return { database, userCategories, userTimeframes };
