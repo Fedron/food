@@ -66,7 +66,6 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
         delete record["changed"];
 
         if (title !== "food") {
-          console.log(`Saving ${record.name}`);
           fetch(`/db/${title}s/save`, {
             method: "post",
             headers: {
@@ -218,6 +217,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
               {renderedDatabase}
               <Button className={classes.dbItem} style={{ marginTop: theme.spacing(2), justifyContent: "center" }} onClick={() => {
                 setCreating(true);
+                setActiveItem(-1);
               }}>
                 <Typography><i className="fas fa-plus"></i> Add new</Typography>  
               </Button>
@@ -225,6 +225,7 @@ const DatabaseEditor = ({ title, database, render, databaseItem }) => {
             <div className={classes.editOptions}>
               <Button onClick={() => {
                 setCreating(true);
+                setActiveItem(-1);
               }}><Icon className="fas fa-plus" /></Button>
               <Button onClick={() => {
                 if (activeItem) {

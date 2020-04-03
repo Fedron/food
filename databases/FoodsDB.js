@@ -20,7 +20,18 @@ class FoodsDB extends Database {
       attrs["images"] = [];
     }
 
-    record.foods.push(attrs);
+    for (let index in record.foods) {
+      if (record.foods[index].id === attrs.id) {
+        Object.assign(record.foods[index], attrs);
+        record.foods[index].images = [];
+        break;
+      }
+    }
+
+    console.log(record);
+
+    // let foodToUpdate = record.foods.find((food) => food.id === attrs.id);
+    // foodToUpdate = attrs;
 
     await this.writeAll(records);
   }

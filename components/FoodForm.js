@@ -48,8 +48,8 @@ const FoodForm = ({
   const [foodRecipe, setFoodRecipe] = useState("");
   const [recipeEditorOpen, setRecipeEditorOpen] = useState(false);
 
-  const [newFoodName, handleNewFoodName,, setNewFoodName] = useFormInput("");
-  const [newFoodImages, setNewFoodImages] = useState([]);
+  // const [newFoodName, handleNewFoodName,, setNewFoodName] = useFormInput("");
+  // const [newFoodImages, setNewFoodImages] = useState([]);
 
   const [foodCategories, setFoodCategories] = useState([]);
   const [foodTimeframe, setFoodTimeframe] = useState("");
@@ -60,12 +60,20 @@ const FoodForm = ({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    if (activeItem === -1) {
+      setFoodName("");
+      setFoodRecipe("");
+      setFoodImages([]);
+      setFoodCategories([]);
+      setFoodTimeframe("");
+      setErrors({});
+      return;
+    }
     setFoodName(activeItem.name);
     setFoodRecipe(activeItem.recipe);
     setFoodImages(activeItem.images);
     setFoodCategories(activeItem.categories);
     setFoodTimeframe(activeItem.timeframe);
-    setFoodRecipe(activeItem.recipe);
     setErrors({});
   }, [activeItem]);
 
@@ -75,6 +83,10 @@ const FoodForm = ({
       updatedErrors.name = "Cannot leave blank";
     }
 
+    if (!foodImages.length) {
+      updatedErrors.images = "Please add at least one image";
+    }
+
     setErrors(updatedErrors);
 
     if (Object.keys(updatedErrors).length > 0) {
@@ -82,6 +94,10 @@ const FoodForm = ({
     }
 
     activeItem.name = foodName;
+    activeItem.recipe = foodRecipe;
+    activeItem.categories = foodCategories;
+    activeItem.timeframe = foodTimeframe;
+    activeItem.images = foodImages;
     activeItem.changed = true;
 
     updateDB(activeItem);
@@ -89,11 +105,11 @@ const FoodForm = ({
 
   const createNewFood = () => {
     const updatedErrors = {}
-    if (!newFoodName) {
+    if (!foodName) {
       updatedErrors.name = "Cannot leave blank";
     }
 
-    if (!newFoodImages.length) {
+    if (!foodImages.length) {
       updatedErrors.images = "Please add at least one image";
     }
 
@@ -105,25 +121,22 @@ const FoodForm = ({
 
     updateDB({
       id: uuid(),
-      name: newFoodName,
+      name: foodName,
       recipe: foodRecipe,
-      images: newFoodImages,
+      images: foodImages,
       categories: foodCategories,
       timeframe: foodTimeframe,
       new: true
     });
 
-    setNewFoodName("");
+    setFoodName("");
     setFoodRecipe("");
-    setNewFoodImages([]);
+    setFoodImages([]);
     setFoodCategories([]);
     setFoodTimeframe("");
   }
 
-  let renderedNewFoodImages;
-  let renderedFoodImages;
-  if (isCreating) {
-    renderedNewFoodImages = newFoodImages.map(food => <Card key={food.name}><CardContent>
+  const renderedFoodImages = foodImages.map(food => <Card key={food.name}><CardContent>
       <div className={classes.foodImage}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <img src={`${food.data}`} height="100" />
@@ -132,31 +145,12 @@ const FoodForm = ({
         <IconButton
           className="fas fa-times"
           onClick={() => {
-            setNewFoodImages(newFoodImages.filter(f => f.name !== food.name));
+            setFoodImages(foodImages.filter(f => f.name !== food.name));
           }}
         />
       </div>
       </CardContent></Card>
-    );
-  } else {
-    if (foodImages) {
-      renderedFoodImages = foodImages.map(food => <Card key={food.name}><CardContent>
-        <div className={classes.foodImage}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <img src={`${food.data}`} height="100" />
-            <Typography variant="h5">{food.name}</Typography>
-          </div>  
-          <IconButton
-            className="fas fa-times"
-            onClick={() => {
-              setFoodImages(foodImages.filter(f => f.name !== food.name));
-            }}
-          />
-        </div>
-        </CardContent></Card>
-      );
-    }
-  }
+  );
 
   return (
     <>
@@ -178,8 +172,8 @@ const FoodForm = ({
         id="name"
         label="Name of food"
         name="name"
-        value={isCreating ? newFoodName : foodName}
-        onChange={isCreating ? handleNewFoodName : handleFoodName}
+        value={foodName}
+        onChange={handleFoodName}
       />
       {errors.name &&
       <Typography color="error">{errors.name}</Typography>
@@ -260,9 +254,10 @@ const FoodForm = ({
       <Typography variant="h5">Choose some images</Typography>
       <input type="file" onChange={(e) => {
         if (e.target.files[0].size > 200000) {
-          setErrors({ ...errors, images: "Images mut be smaller than 200KB" });
+          setErrors({ ...errors, images: "Images must be smaller than 200KB" });
           return;
         }
+        setErrors({ ...errors, images: "" });
 
         const newImage = {
           name: e.target.files[0].name
@@ -272,13 +267,13 @@ const FoodForm = ({
         reader.readAsDataURL(e.target.files[0]);
         reader.onload = function(evt) {
           newImage["data"] = evt.target.result;
-          setNewFoodImages([...newFoodImages, newImage]);
+          setFoodImages([...foodImages, newImage]);
         }
       }} />
       {errors.images &&
       <Typography color="error">{errors.images}</Typography>
       }
-      {isCreating ? renderedNewFoodImages : renderedFoodImages}
+      {renderedFoodImages}
 
       <Button
         onClick={isCreating ? createNewFood : updateFood}

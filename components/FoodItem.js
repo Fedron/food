@@ -23,7 +23,7 @@ const FoodItem = ({ item }) => {
           <Typography variant="h4">{item.name}</Typography>
           <div style={{ display: "flex" }}>
             {item.categories.map(category => (
-              <Chip label={category} style={{ marginRight: theme.spacing(1) }} />
+              <Chip key={category} label={category} style={{ marginRight: theme.spacing(1) }} />
             ))}
           </div>    
         </div>

@@ -141,8 +141,7 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  // process.env.PORT
-  server.listen(process.env.PORT, err => {
+  server.listen(3000, err => {
     if (err) throw err;
     console.log("> Listening...");
   });
