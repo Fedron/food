@@ -20,7 +20,7 @@ const FoodItem = ({ item }) => {
         <img src={`${item.images[0].data}`} height="100" style={{ margin: "4px", marginRight: "16px" }} />
         }
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-          <Typography variant="h4">{item.name}</Typography>
+          <Typography variant="h5">{item.name}</Typography>
           <div style={{ display: "flex" }}>
             {item.categories.map(category => (
               <Chip key={category} label={category} style={{ marginRight: theme.spacing(1) }} />

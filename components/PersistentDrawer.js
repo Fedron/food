@@ -72,13 +72,13 @@ const PersistentDrawer = (props) => {
           <ListItem button >
             <Icon className="fas fa-chart-line" style={{ marginRight: theme.spacing(4) }} />
             <ListItemText>
-              <Link href="/"><a>Dashboard</a></Link>
+              <a href="/">Dashboard</a>
             </ListItemText>
           </ListItem>
           <ListItem button >
             <Icon className="fas fa-mitten" style={{ marginRight: theme.spacing(4) }} />
             <ListItemText>
-              <Link href="/food"><a>Food Picker</a></Link>
+              <a href="/food">Food Picker</a>
             </ListItemText>
           </ListItem>
         </List>
@@ -93,7 +93,7 @@ const PersistentDrawer = (props) => {
           <ListItem button >
             <Icon className="fas fa-book" style={{ marginRight: theme.spacing(4) }} />
             <ListItemText>
-              <a href="/db/categories">Catergories Database</a>
+              <a href="/db/categories">Categories Database</a>
             </ListItemText>
           </ListItem>
           <ListItem button >

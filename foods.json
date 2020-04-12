@@ -16,7 +16,7 @@
           "5192b741-2f1b-4158-aa19-2fd699b51a3a"
         ],
         "timeframe": "2f55dd96-3ec3-48bb-94d0-baa32e282ae6",
-        "timesUsed": 0
+        "timesUsed": []
       },
       {
         "id": "023955ba-2224-4f63-9405-46c779027a23",
@@ -27,7 +27,7 @@
           "0dde19f1-0650-4711-8db1-8179ad759cb8"
         ],
         "timeframe": "ab4d1d57-22e6-460f-9c42-5b2b8154fc8b",
-        "timesUsed": 0,
+        "timesUsed": [],
         "images": [
           {
             "name": "gpu2.jpg",
@@ -43,7 +43,7 @@
           "5192b741-2f1b-4158-aa19-2fd699b51a3a"
         ],
         "timeframe": "70e6ed3f-0514-4e11-a0eb-ada00f9ae403",
-        "timesUsed": 0,
+        "timesUsed": [],
         "images": [
           {
             "name": "monitor2.jpg",

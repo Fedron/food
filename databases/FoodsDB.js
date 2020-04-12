@@ -15,8 +15,8 @@ class FoodsDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
     
-    if (attrs["timesUsed"] !== 0) {
-      attrs["timesUsed"] = 0;
+    if (attrs["timesUsed"] !== []) {
+      attrs["timesUsed"] = [];
       attrs["images"] = [];
     }
 
@@ -27,11 +27,6 @@ class FoodsDB extends Database {
         break;
       }
     }
-
-    console.log(record);
-
-    // let foodToUpdate = record.foods.find((food) => food.id === attrs.id);
-    // foodToUpdate = attrs;
 
     await this.writeAll(records);
   }
