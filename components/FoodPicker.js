@@ -1,5 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { green, red } from '@material-ui/core/colors';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
@@ -9,6 +10,11 @@ import Collapse from '@material-ui/core/Collapse';
 import Alert from '@material-ui/lab/Alert';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import Paper from '@material-ui/core/Paper';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import Chip from '@material-ui/core/Chip';
+import Icon from '@material-ui/core/Icon';
 
 import FoodCategoryPicker from './FoodCategoryPicker.js';
 import FoodTimeframePicker from './FoodTimeframePicker.js';
@@ -36,6 +42,37 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     width: "100%"
   },
+  gridList: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: 'nowrap',
+    transform: 'translateZ(0)',
+  },
+  title: {
+    color: theme.palette.primary.light,
+  },
+  titleBar: {
+    background:
+      'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+  },
+  pickerButton: {
+    margin: theme.spacing(1),
+    width: "100%"
+  },
+  rejectPickerButton: {
+    color: "white",
+    backgroundColor: red[500],
+    "&:hover": {
+      backgroundColor: red[700]
+    }
+  },
+  confirmPickerButton: {
+    color: "white",
+    backgroundColor: green[500],
+    "&:hover": {
+      backgroundColor: green[700]
+    }
+  }
 }));
 
 
@@ -54,8 +91,14 @@ function getStepContent(step, categories, selectedCategories, setCategories, tim
   }
 }
 
+function useForceUpdate(){
+  const [value, setValue] = React.useState(0); // integer state
+  return () => setValue(value => ++value); // update the state to force render
+}
+
 const FoodPicker = ({ foods, categories, timeframes }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState(new Set());
   const [skipped, setSkipped] = React.useState(new Set());
@@ -66,6 +109,8 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
 
   const [pickedFood, setPickedFood] = React.useState("");
   const [alertMsg, setAlertMsg] = React.useState("");
+  const [foodConfirmed, setFoodConfirmed] = React.useState(false);
+  const forceUpdate = useForceUpdate();
   
   const totalSteps = () => {
     return getSteps().length;
@@ -101,6 +146,7 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
   const allStepsCompleted = () => {
     const isFinished = completedSteps() === totalSteps() - skippedSteps();
     if (!isFinished) { return false; }
+    if (pickedFood) { return true; }
 
     let filteredFoods = foods.filter((food) => {
       if (food.categories.some(c => selectedCategories.includes(c))) {
@@ -123,6 +169,7 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
 
     filteredFoods = filteredFoods.slice(0, 4);
     const chosenFood = filteredFoods[Math.floor(Math.random() * filteredFoods.length)];
+    setPickedFood(chosenFood);
     return true;
   };
 
@@ -139,6 +186,9 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
         : activeStep + 1;
 
     setActiveStep(newActiveStep);
+    if (allStepsCompleted()) {
+      forceUpdate();
+    }
   };
 
   const handleBack = () => {
@@ -157,11 +207,16 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
     if (completed.size !== totalSteps() - skippedSteps()) {
       handleNext();
     }
+
+    if (allStepsCompleted()) {
+      forceUpdate();
+    }
   };
 
   const handleReset = () => {
     setSelectedCategories([]);
     setSelectedTimeframes([]);
+    setPickedFood("");
     setActiveStep(0);
     setCompleted(new Set());
     setSkipped(new Set());
@@ -175,105 +230,151 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
     return completed.has(step);
   }
 
-  return (
-  <div className={classes.root}>
-    {alertMsg && (
-      <Collapse in={alertMsg ? true : false}>
-        <Alert
-          severity="warning"
-          action={
-            <IconButton
-              color="inherit"
-              size="small"
-              onClick={() => { setAlertMsg(""); }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-        >{alertMsg}</Alert>
-      </Collapse>
-    )}
-    <Stepper alternativeLabel nonLinear activeStep={activeStep}>
-      {steps.map((label, index) => {
-        const stepProps = {};
-        const buttonProps = {};
-        if (isStepOptional(index)) {
-          buttonProps.optional = <Typography variant="caption">Optional</Typography>;
-        }
-        if (isStepSkipped(index)) {
-          stepProps.completed = false;
-        }
-        return (
-          <Step key={label} {...stepProps}>
-            <StepButton
-              onClick={handleStep(index)}
-              completed={isStepComplete(index)}
-              {...buttonProps}
-            >
-              {label}
-            </StepButton>
-          </Step>
-        );
-      })}
-    </Stepper>
-    <div className={classes.instructionsRoot}>
-      {allStepsCompleted() ? (
-        <div>
-          <Typography>
-            Here's your picked food
-          </Typography>
-        </div>
-      ) : (
-        <div>
-          <Typography className={classes.instructions}>
-            {getStepContent(
-              activeStep,
-              categories,
-              selectedCategories,
-              setSelectedCategories,
-              timeframes,
-              selectedTimeframes,
-              setSelectedTimeframes
-            )}
-          </Typography>
-          <div style={{ width: "100%" }}>
-            <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-              Back
-            </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                className={classes.button}
-              >
-                Next
-              </Button>
-            {isStepOptional(activeStep) && !completed.has(activeStep) && activeStep !== 1 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSkip}
-                className={classes.button}
-              >
-                Skip
-              </Button>
-            )}
+  allStepsCompleted();
 
-            {activeStep !== steps.length &&
-              (completed.has(activeStep) ? (
-                <Typography variant="caption" className={classes.completed}>
-                  Step {activeStep + 1} already completed
-                </Typography>
-              ) : (
-                <Button variant="contained" color="primary" onClick={handleComplete}>
-                  {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Confirm'}
+  return (
+    pickedFood ? (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <Typography variant="h4" style={{ marginBottom: theme.spacing(2) }}>Here's your picked food</Typography>
+        <Paper style={{ padding: theme.spacing(2), marginBottom: theme.spacing(2) }}>  
+          <Typography variant="h2" style={{ textAlign: "center" }}>{pickedFood.name}</Typography>
+          <Typography variant="h4" style={{ textAlign: "center", margin: theme.spacing(1) }}>({timeframes.filter(t => t.id === pickedFood.timeframe)[0].duration})</Typography>
+          <GridList className={classes.gridList} cols={2.5}>
+            {pickedFood.images.map((image) => (
+              <GridListTile key={image.name}>
+                <img src={image.data} />
+              </GridListTile>
+            ))}
+          </GridList>
+          <div style={{ display: "flex", justifyContent: "center", margin: theme.spacing(1) }}>
+            {pickedFood.categories.map(c => {
+              const category = categories.filter(ci => ci.name === c)[0];
+              return <Chip key={category.name} label={category.name} style={{ backgroundColor: category.color, margin: "4px" }} />;
+            })}
+          </div>
+          <Typography><div dangerouslySetInnerHTML={{ __html: pickedFood.recipe }}></div></Typography>
+        </Paper>
+        <div style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center"
+        }}>
+          {foodConfirmed ?
+            <Typography variant="h4" style={{ color: green[500] }}><Icon className="fas fa-check" /> Food picked!</Typography>
+            :
+            <>
+            <Button
+              className={`${classes.pickerButton} ${classes.rejectPickerButton}`}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                handleReset();
+              }}
+            ><Icon className="fas fa-times" /> Reject</Button>
+            <Button
+              className={`${classes.pickerButton} ${classes.confirmPickerButton}`}
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                setFoodConfirmed(true);
+              }}
+            ><Icon className="fas fa-check" /> Confirm</Button>
+            </>
+          }
+        </div> 
+      </div>
+    ) : (
+      <div className={classes.root}>
+        {alertMsg && (
+          <Collapse in={alertMsg ? true : false}>
+            <Alert
+              severity="warning"
+              action={
+                <IconButton
+                  color="inherit"
+                  size="small"
+                  onClick={() => { setAlertMsg(""); }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >{alertMsg}</Alert>
+          </Collapse>
+        )}
+        <Stepper alternativeLabel nonLinear activeStep={activeStep}>
+          {steps.map((label, index) => {
+            const stepProps = {};
+            const buttonProps = {};
+            if (isStepOptional(index)) {
+              buttonProps.optional = <Typography variant="caption">Optional</Typography>;
+            }
+            if (isStepSkipped(index)) {
+              stepProps.completed = false;
+            }
+            return (
+              <Step key={label} {...stepProps}>
+                <StepButton
+                  onClick={handleStep(index)}
+                  completed={isStepComplete(index)}
+                  {...buttonProps}
+                >
+                  {label}
+                </StepButton>
+              </Step>
+            );
+          })}
+        </Stepper>
+        <div className={classes.instructionsRoot}>
+          <div>
+            <Typography className={classes.instructions}>
+              {getStepContent(
+                activeStep,
+                categories,
+                selectedCategories,
+                setSelectedCategories,
+                timeframes,
+                selectedTimeframes,
+                setSelectedTimeframes
+              )}
+            </Typography>
+            <div style={{ width: "100%" }}>
+              <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+                Back
+              </Button>
+              <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                  className={classes.button}
+                >
+                  Next
                 </Button>
-              ))}
+              {isStepOptional(activeStep) && !completed.has(activeStep) && activeStep !== 1 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSkip}
+                  className={classes.button}
+                >
+                  Skip
+                </Button>
+              )}
+
+              {activeStep !== steps.length &&
+                (completed.has(activeStep) ? (
+                  <Typography variant="caption" className={classes.completed}>
+                    Step {activeStep + 1} already completed
+                  </Typography>
+                ) : (
+                  <Button variant="contained" color="primary" onClick={handleComplete}>
+                    {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Confirm'}
+                  </Button>
+                ))}
+            </div>
           </div>
         </div>
-      )}
-    </div>
-  </div>
+      </div>
+    )
   );
 }
  

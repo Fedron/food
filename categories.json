@@ -38,5 +38,35 @@
         "color": "#f250e1"
       }
     ]
+  },
+  {
+    "id": "b2cce72b0d08c75a",
+    "categories": [
+      {
+        "id": "80ae7a3c-09b7-49a3-ae85-c8273dee18a5",
+        "name": "Kuracie mesko",
+        "color": "#d41593"
+      },
+      {
+        "id": "7dfdb92c-fc51-4bb9-bb40-368abc43b61d",
+        "name": "Hovedzie mesko",
+        "color": "#df1611"
+      },
+      {
+        "id": "30f9e01c-1bed-4f58-83c3-f64a84b8ad9a",
+        "name": "Pasta",
+        "color": "#e74212"
+      },
+      {
+        "id": "53710fc9-eeb4-4112-bcfc-fc5fae568664",
+        "name": "Mucne jedla",
+        "color": "#e3d510"
+      },
+      {
+        "id": "5e72a734-3b7b-4107-b24e-9b1aaf8292a0",
+        "name": "Zemiaky",
+        "color": "#0fe8d4"
+      }
+    ]
   }
 ]

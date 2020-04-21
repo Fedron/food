@@ -27,5 +27,22 @@
         "color": "#7bfa5b"
       }
     ]
+  },
+  {
+    "id": "b2cce72b0d08c75a",
+    "timeframes": [
+      {
+        "id": "6cc1cb5e-8b99-4a4f-8e1c-d9fcf0db375a",
+        "name": "2 - 3 hours",
+        "duration": "hard",
+        "color": "#ed0b0b"
+      },
+      {
+        "id": "82d1d64b-c899-48a7-ba0f-60add80a2d28",
+        "name": "1 - 2 hours",
+        "duration": "Easy",
+        "color": "#36eb0e"
+      }
+    ]
   }
 ]

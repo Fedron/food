@@ -15,12 +15,18 @@ class TimeframesDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
 
+    let found = false;
     for (let index in record.timeframes) {
       if (record.timeframes[index].id === attrs.id) {
+        found = true;
         Object.assign(record.timeframes[index], attrs);
         record.timeframes[index].images = [];
         break;
       }
+    }
+
+    if (!found) {
+      record.timeframes.push(attrs);
     }
 
     await this.writeAll(records);

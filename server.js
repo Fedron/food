@@ -22,7 +22,7 @@ const requireAuth = (req, res, next) => {
 app.prepare().then(() => {
   const server = express();
 
-  server.use(bodyParser.json());
+  server.use(bodyParser.json({ limit: "10mb" }));
   server.use(cookieSession({
     keys: ["e5ior269rsgflhb32sngd"]
   }));
@@ -141,7 +141,7 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  server.listen(3000, err => {
+  server.listen(3000, "192.168.1.20", err => {
     if (err) throw err;
     console.log("> Listening...");
   });

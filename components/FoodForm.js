@@ -253,8 +253,8 @@ const FoodForm = ({
 
       <Typography variant="h5">Choose some images</Typography>
       <input type="file" onChange={(e) => {
-        if (e.target.files[0].size > 200000) {
-          setErrors({ ...errors, images: "Images must be smaller than 200KB" });
+        if (e.target.files[0].size > 115343360) {
+          setErrors({ ...errors, images: "Images must be smaller than 10MB" });
           return;
         }
         setErrors({ ...errors, images: "" });

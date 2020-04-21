@@ -15,12 +15,18 @@ class CategoriesDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
 
+    let found = false;
     for (let index in record.categories) {
       if (record.categories[index].id === attrs.id) {
+        found = true;
         Object.assign(record.categories[index], attrs);
         record.categories[index].images = [];
         break;
       }
+    }
+
+    if (!found) {
+      record.categories.push(attrs);
     }
 
     await this.writeAll(records);

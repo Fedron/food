@@ -15,17 +15,23 @@ class FoodsDB extends Database {
 
     if (!record) { throw new Error(`Record with ID ${id} not found`); }
     
-    if (attrs["timesUsed"] !== []) {
+    if (!attrs.hasOwnProperty("timesUsed")) {
       attrs["timesUsed"] = [];
       attrs["images"] = [];
     }
 
+    let found = false;
     for (let index in record.foods) {
       if (record.foods[index].id === attrs.id) {
+        found = true;
         Object.assign(record.foods[index], attrs);
         record.foods[index].images = [];
         break;
       }
+    }
+
+    if (!found) {
+      record.foods.push(attrs);
     }
 
     await this.writeAll(records);
