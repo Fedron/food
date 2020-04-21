@@ -277,11 +277,19 @@ const FoodPicker = ({ foods, categories, timeframes }) => {
               color="secondary"
               onClick={() => {
                 setFoodConfirmed(true);
+                fetch(`/db/foods/used`, {
+                  method: "post",
+                  headers: {
+                    "Accept": "application/json, text/plan, */*",
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify(pickedFood)
+                });
               }}
             ><Icon className="fas fa-check" /> Confirm</Button>
             </>
           }
-        </div> 
+        </div>
       </div>
     ) : (
       <div className={classes.root}>

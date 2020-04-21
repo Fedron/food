@@ -49,6 +49,21 @@ class FoodsDB extends Database {
     await this.writeAll(records);
   }
 
+  async updateTimesUsed(userID, foodID, time) {
+    const records = await this.getAll();
+    const record = records.find((record) => record.id === userID);
+
+    if (!record) { throw new Error(`Record with ID ${userID} not found`); }
+
+    for (let index in record.foods) {
+      if (record.foods[index].id === foodID) {
+        record.foods[index].timesUsed.push(time);
+        break;
+      }
+    }
+    await this.writeAll(records);
+  }
+
   async delete(userID, foodID) {
     const records = await this.getAll();
     let record = records.find(r => r.id === userID);

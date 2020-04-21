@@ -137,6 +137,12 @@ app.prepare().then(() => {
     res.send("");
   });
 
+  server.post("/db/foods/used", requireAuth, async (req, res) => {
+    const time = Date.now();
+    await foodsDB.updateTimesUsed(req.session.userID, req.body.id, time);
+    res.send("");
+  });
+
   server.get("*", (req, res) => {
     return handle(req, res);
   });

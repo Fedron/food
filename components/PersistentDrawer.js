@@ -81,6 +81,12 @@ const PersistentDrawer = (props) => {
               <a href="/food">Food Picker</a>
             </ListItemText>
           </ListItem>
+          <ListItem button >
+            <Icon className="fas fa-history" style={{ marginRight: theme.spacing(4) }} />
+            <ListItemText>
+              <a href="/recent">Recent Foods</a>
+            </ListItemText>
+          </ListItem>
         </List>
         <Divider />
         <List>
