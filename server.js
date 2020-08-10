@@ -90,8 +90,7 @@ app.prepare().then(() => {
     res.redirect("/signin");
   });
 
-  server.get("/", requireAuth, (req, res) => { return app.render(req, res, "/") }
-  );
+  server.get("/", requireAuth, (req, res) => { return app.render(req, res, "/") });
 
   server.post("/db/timeframes/save", requireAuth, async (req, res) => {
     console.log(req.body);
@@ -147,7 +146,7 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  server.listen(3000, "192.168.1.20", err => {
+  server.listen(3000, err => {
     if (err) throw err;
     console.log("> Listening...");
   });

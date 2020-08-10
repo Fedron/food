@@ -66,6 +66,26 @@
         "id": "5e72a734-3b7b-4107-b24e-9b1aaf8292a0",
         "name": "Zemiaky",
         "color": "#0fe8d4"
+      },
+      {
+        "id": "4b453e07-4e25-42b2-bff5-ecfb69aa5b19",
+        "name": "Bravcove mesko (svinka)",
+        "color": "#085aed"
+      },
+      {
+        "id": "d93cf1bf-11d0-4873-9eaa-3962d9993912",
+        "name": "Ryby",
+        "color": "#8a04f6"
+      },
+      {
+        "id": "7b5aad5c-7045-48a7-b9de-3fe61e6a0866",
+        "name": "Ryza",
+        "color": "#8d8181"
+      },
+      {
+        "id": "80337f4a-22be-43df-90a9-f725c0937426",
+        "name": "Polievky",
+        "color": "#323c27"
       }
     ]
   }

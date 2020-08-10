@@ -4,9 +4,10 @@
     "timeframes": [
       {
         "id": "70e6ed3f-0514-4e11-a0eb-ada00f9ae403",
-        "name": "stu",
-        "duration": "stui",
-        "color": "#6b87cc"
+        "name": "Short",
+        "duration": "<30min",
+        "color": "#6b87cc",
+        "images": []
       },
       {
         "id": "21ca44cb-0ac2-4229-bc5b-e57ad9596fa0",
@@ -16,9 +17,10 @@
       },
       {
         "id": "5db26fbd-f586-4a4b-8cc4-773383528d68",
-        "name": "dth",
-        "duration": "dth",
-        "color": "#54f3d4"
+        "name": "Long",
+        "duration": "About 2 hours",
+        "color": "#54f3d4",
+        "images": []
       },
       {
         "id": "c03c19fe-961f-4bb1-b782-527cc4646b8f",
@@ -42,6 +44,12 @@
         "name": "1 - 2 hours",
         "duration": "Easy",
         "color": "#36eb0e"
+      },
+      {
+        "id": "c5cd6652-f6d5-4b48-a4ef-2c1358c6c9b9",
+        "name": "30 min - 1 hour",
+        "duration": "very easy",
+        "color": "#cfdb15"
       }
     ]
   }

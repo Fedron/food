@@ -19,6 +19,7 @@ import { MultipleSelect } from 'react-select-material-ui';
 import useFormInput from '../hooks/useFormInput.js';
 import RichTextEditor from './RichTextEditor.js';
 import 'isomorphic-fetch';
+import { render } from 'react-dom';
 
 const useStyles = makeStyles((theme) => ({
   foodImage: {
@@ -136,24 +137,29 @@ const FoodForm = ({
     setFoodTimeframe("");
   }
 
-  const renderedFoodImages = foodImages.map(food => <Card key={food.name}><CardContent>
-      <div className={classes.foodImage}>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img src={`${food.data}`} height="100" />
-          <Typography variant="h5">{food.name}</Typography>
-        </div>  
-        <IconButton
-          className="fas fa-times"
-          onClick={() => {
-            setFoodImages(foodImages.filter(f => f.name !== food.name));
-          }}
-        />
-      </div>
-      </CardContent></Card>
-  );
+  let renderedFoodImages;
+  if (!foodImages) {
+    renderedFoodImages = [];
+  } else {
+    renderedFoodImages = foodImages.map(food => <Card key={food.name}><CardContent>
+        <div className={classes.foodImage}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img src={`${food.data}`} height="100" />
+            <Typography variant="h5">{food.name}</Typography>
+          </div>  
+          <IconButton
+            className="fas fa-times"
+            onClick={() => {
+              setFoodImages(foodImages.filter(f => f.name !== food.name));
+            }}
+          />
+        </div>
+        </CardContent></Card>
+    );
+  }
 
   return (
-    <>
+    <div style={{ width: "100%" }}>
     <Typography
       variant="h2"
       style={{ marginBottom: theme.spacing(2) }}
@@ -164,7 +170,7 @@ const FoodForm = ({
       `Edit '${activeItem.name}' food`
       }
     </Typography>
-    <main style={{ width: "50%" }}>
+    <main style={{ width: "80%", margin: "0 auto" }}>
       <TextField
         variant="outlined"
         margin="normal"
@@ -285,7 +291,7 @@ const FoodForm = ({
         {isCreating ? "Create" : "Submit"}
       </Button>
     </main>
-    </>
+    </div>
   );
 }
  
